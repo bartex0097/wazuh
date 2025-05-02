@@ -25,7 +25,7 @@ from wazuh.core.wazuh_queue import WazuhQueue
 from wazuh.core.wazuh_socket import WazuhSocket, WazuhSocketJSON, create_wazuh_socket_message
 from wazuh.core.wdb import WazuhDBConnection
 from wazuh.core.wdb_http import get_wdb_http_client
-
+from wazuh.rbac.utils import resource_cache
 
 detect_wrong_lines = re.compile(r'(.+ .+ (?:any|\d+\.\d+\.\d+\.\d+) \w+)')
 detect_valid_lines = re.compile(r'^(\d{3,}) (.+) (any|\d+\.\d+\.\d+\.\d+) (\w+)', re.MULTILINE)
@@ -1308,7 +1308,7 @@ def get_groups() -> set:
     return groups
 
 
-@common.context_cached('system_expanded_groups')
+@resource_cache()
 def expand_group(group_name: str) -> set:
     """Expand a certain group.
 
@@ -1344,7 +1344,8 @@ def expand_group(group_name: str) -> set:
     finally:
         wdb_conn.close()
 
-    return set(agents_ids) & get_agents_info()
+    system_agents = get_agents_info()
+    return set(agents_ids) & system_agents
 
 
 @lru_cache()
