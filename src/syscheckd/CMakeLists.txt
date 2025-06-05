@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12.4)
 
 project(wazuh-syscheckd)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -63,7 +66,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_FLAGS
-    "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Woverloaded-virtual -Wunused -Wcast-align -Wformat=2 -std=c++14 -pthread"
+    "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Woverloaded-virtual -Wunused -Wcast-align -Wformat=2 -std=c++17 -pthread"
 )
 
 if(APPLE)
@@ -75,9 +78,9 @@ endif(APPLE)
 add_subdirectory("src/db")
 
 file(GLOB SYSCHECKD_SRC
-     "${CMAKE_SOURCE_DIR}/src/*.c"
-     "${CMAKE_SOURCE_DIR}/src/registry/*.c"
-     "${CMAKE_SOURCE_DIR}/src/whodata/*.c")
+     "${CMAKE_SOURCE_DIR}/src/*.cpp"
+     "${CMAKE_SOURCE_DIR}/src/registry/*.cpp"
+     "${CMAKE_SOURCE_DIR}/src/whodata/*.cpp")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_library(wazuh-syscheckd STATIC ${SYSCHECKD_SRC})
