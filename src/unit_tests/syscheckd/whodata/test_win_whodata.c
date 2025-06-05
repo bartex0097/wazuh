@@ -3614,7 +3614,7 @@ int setup_restore_sacls(void **state) {
     expect_function_call_any(__wrap_pthread_mutex_unlock);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         dir_it->dirs_status.status &= ~WD_IGNORE_REST;
     }
 
@@ -3634,7 +3634,7 @@ int teardown_restore_sacls(void **state) {
     expect_function_call_any(__wrap_pthread_mutex_unlock);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (FIM_MODE(dir_it->options) == FIM_WHODATA) {
             ((directory_t *)OSList_GetDataFromIndex(syscheck.directories, 0))->dirs_status.status |= WD_IGNORE_REST;
         }

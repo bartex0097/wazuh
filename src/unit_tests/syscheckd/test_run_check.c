@@ -271,7 +271,7 @@ static int setup_hash(void **state) {
     win32rtfim *rtlocald;
     rtlocald = calloc(1, sizeof(win32rtfim));
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             OSHash_Add_ex(syscheck.realtime->dirtb, dir_it->path, rtlocald);
         }
@@ -291,7 +291,7 @@ static int teardown_hash(void **state) {
     expect_function_call_any(__wrap_pthread_mutex_unlock);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             free_win32rtfim_data(OSHash_Delete_ex(syscheck.realtime->dirtb, dir_it->path));
         }
@@ -489,7 +489,7 @@ void test_fim_run_realtime_w_first_timeout(void **state) {
 
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);
@@ -508,7 +508,7 @@ void test_fim_run_realtime_w_first_timeout(void **state) {
 
     expect_string(__wrap__merror, formatted_msg, FIM_ERROR_REALTIME_WAITSINGLE_OBJECT);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);
@@ -539,7 +539,7 @@ void test_fim_run_realtime_w_wait_success(void **state) {
 
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);
@@ -558,7 +558,7 @@ void test_fim_run_realtime_w_wait_success(void **state) {
     will_return(wrap_WaitForSingleObjectEx, WAIT_IO_COMPLETION);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);
@@ -590,7 +590,7 @@ void test_fim_run_realtime_w_sleep(void **state) {
 
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);
@@ -601,7 +601,7 @@ void test_fim_run_realtime_w_sleep(void **state) {
     expect_value(wrap_Sleep, dwMilliseconds, SYSCHECK_WAIT * 1000);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             expect_string(__wrap_realtime_adddir, dir, dir_it->path);
             will_return(__wrap_realtime_adddir, 0);

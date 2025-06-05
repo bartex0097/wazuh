@@ -57,7 +57,7 @@ int realtime_start() {
 error:
     w_rwlock_wrlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        directory_t *dir_it = node_it->data;
+        directory_t *dir_it = static_cast<directory_t*>(node_it->data);
 
         if (dir_it->options & REALTIME_ACTIVE) {
             dir_it->options &= ~ REALTIME_ACTIVE;

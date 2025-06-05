@@ -46,7 +46,7 @@ int Read_Syscheck_Config(const char *cfgfile)
 #endif
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->diff_size_limit == -1) {
             dir_it->diff_size_limit = syscheck.file_size_limit;
         }
@@ -177,7 +177,7 @@ cJSON *getSyscheckConfig(void) {
         OSListNode *node_it;
 
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             cJSON *pair = cJSON_CreateObject();
             cJSON *opts = cJSON_CreateArray();
             if (dir_it->options & CHECK_MD5SUM) {

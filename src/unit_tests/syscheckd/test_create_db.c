@@ -1988,7 +1988,7 @@ static void test_fim_scan_db_full_double_scan(void **state) {
 
     // First scan
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         expect_string(__wrap_lstat, filename, dir_it->path);
         will_return(__wrap_lstat, &directory_buf);
         will_return(__wrap_lstat, 0);
@@ -2014,7 +2014,7 @@ static void test_fim_scan_db_full_double_scan(void **state) {
     // Second scan
     will_return(__wrap_fim_db_transaction_start, &mock_handle);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         expect_string(__wrap_lstat, filename, dir_it->path);
         will_return(__wrap_lstat, &directory_buf);
         will_return(__wrap_lstat, 0);
@@ -2073,7 +2073,7 @@ static void test_fim_scan_db_full_not_double_scan(void **state) {
 
     // First scan
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         expect_string(__wrap_lstat, filename, dir_it->path);
         will_return(__wrap_lstat, &directory_buf);
         will_return(__wrap_lstat, 0);
@@ -2134,7 +2134,7 @@ static void test_fim_scan_realtime_enabled(void **state) {
 
     // First scan
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         expect_string(__wrap_lstat, filename, dir_it->path);
         will_return(__wrap_lstat, &directory_buf);
         will_return(__wrap_lstat, 0);
@@ -2205,7 +2205,7 @@ static void test_fim_scan_no_limit(void **state) {
 
     // First scan
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         expect_string(__wrap_lstat, filename, dir_it->path);
         will_return(__wrap_lstat, &directory_buf);
         will_return(__wrap_lstat, 0);

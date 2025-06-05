@@ -146,7 +146,7 @@ static int setup_add_directories_to_whodata_list(void **state) {
     syscheck.directories = RELOAD_CONFIG;
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         whodata_directory_t *dir = calloc(1, sizeof(whodata_directory_t));
 
         if (dir == NULL) {
@@ -452,7 +452,7 @@ static void test_fim_audit_reload_rules_full(void **state) {
     will_return_always(__wrap_search_audit_rule, 0);
 
     OSList_foreach(node_it, RELOAD_CONFIG) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         snprintf(log_messages[i], OS_SIZE_512, FIM_ERROR_WHODATA_MAXNUM_WATCHES, dir_it->path, 0);
         if (i == 0) {
             // First directory will cause an error message

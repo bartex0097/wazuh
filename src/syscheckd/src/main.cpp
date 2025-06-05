@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 
         /* Print directories to be monitored */
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             char optstr[ 1024 ];
 
             if (dir_it->symbolic_links == NULL) {
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
 
         /* Check directories set for real time */
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             if (dir_it->options & REALTIME_ACTIVE) {
 #if defined (INOTIFY_ENABLED) || defined (WIN32)
                 minfo(FIM_REALTIME_MONITORING_DIRECTORY, dir_it->path);
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
         }
 
         OSList_foreach(node_it, syscheck.wildcards) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             if (dir_it->options & REALTIME_ACTIVE) {
 #if defined (INOTIFY_ENABLED) || defined (WIN32)
                 start_realtime = 1;
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
             // Switch who-data to real-time mode
 
             OSList_foreach(node_it, syscheck.directories) {
-                dir_it = node_it->data;
+                dir_it = static_cast<directory_t*>(node_it->data);
                 if ((dir_it->options & WHODATA_ACTIVE)) {
                     dir_it->options &= ~WHODATA_ACTIVE;
                     dir_it->options |= REALTIME_ACTIVE;
@@ -321,7 +321,7 @@ int main(int argc, char **argv)
             }
 
             OSList_foreach(node_it, syscheck.wildcards) {
-                dir_it = node_it->data;
+                dir_it = static_cast<directory_t*>(node_it->data);
                 if ((dir_it->options & WHODATA_ACTIVE)) {
                     dir_it->options &= ~WHODATA_ACTIVE;
                     dir_it->options |= REALTIME_ACTIVE;

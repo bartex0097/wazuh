@@ -221,7 +221,7 @@ void audit_create_rules_file() {
 
     w_rwlock_rdlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if ((dir_it->options & WHODATA_ACTIVE)) {
             real_path = fim_get_real_path(dir_it);
 
@@ -278,7 +278,7 @@ void audit_rules_to_realtime() {
 
     w_rwlock_wrlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
 
         if ((dir_it->options & WHODATA_ACTIVE)) {
             found = 0;
@@ -460,7 +460,7 @@ void *audit_main(audit_data_t *audit_data) {
     // Change Audit monitored folders to Inotify.
     w_rwlock_wrlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if ((dir_it->options & WHODATA_ACTIVE)) {
             path = fim_get_real_path(dir_it);
             // Check if it's a broken link.
@@ -482,7 +482,7 @@ void *audit_main(audit_data_t *audit_data) {
     }
 
     OSList_foreach(node_it, syscheck.wildcards) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if ((dir_it->options & WHODATA_ACTIVE)) {
 
             w_mutex_lock(&syscheck.fim_realtime_mutex);

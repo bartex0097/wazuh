@@ -494,7 +494,7 @@ void restore_sacls() {
 
     w_rwlock_rdlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->dirs_status.status & WD_IGNORE_REST) {
             sacl_it = NULL;
 
@@ -1151,7 +1151,7 @@ long unsigned int WINAPI state_checker(__attribute__((unused)) void *_void) {
 
         w_rwlock_wrlock(&syscheck.directories_lock);
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             exists = 0;
             d_status = &dir_it->dirs_status;
 

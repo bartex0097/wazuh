@@ -181,7 +181,7 @@ int Start_win32_Syscheck() {
         int whodata_notification = 0;
         /* Remove whodata attributes */
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             if (dir_it->options & WHODATA_ACTIVE) {
                 if (!whodata_notification) {
                     whodata_notification = 1;
@@ -209,7 +209,7 @@ int Start_win32_Syscheck() {
 
         /* Print directories to be monitored */
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             char optstr[ 1024 ];
 
             minfo(FIM_MONITORING_DIRECTORY, dir_it->path, syscheck_opts2str(optstr, sizeof(optstr), dir_it->options));
@@ -287,7 +287,7 @@ int Start_win32_Syscheck() {
         /* Start up message */
         minfo(STARTUP_MSG, getpid());
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             if (dir_it->options & REALTIME_ACTIVE) {
                 realtime_start();
                 break;
@@ -297,7 +297,7 @@ int Start_win32_Syscheck() {
         if (syscheck.realtime == NULL) {
             // Check if a wildcard might require realtime later
             OSList_foreach(node_it, syscheck.wildcards) {
-                dir_it = node_it->data;
+                dir_it = static_cast<directory_t*>(node_it->data);
                 if (dir_it->options & REALTIME_ACTIVE) {
                     realtime_start();
                     break;

@@ -101,7 +101,7 @@ int fim_rules_initial_load() {
     w_rwlock_rdlock(&syscheck.directories_lock);
     w_mutex_lock(&rules_mutex);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         // Check if dir[i] is set in whodata mode
         if ((dir_it->options & WHODATA_ACTIVE)) {
 

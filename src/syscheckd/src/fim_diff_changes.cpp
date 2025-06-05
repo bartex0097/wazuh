@@ -404,6 +404,7 @@ int fim_diff_registry_tmp(const char *value_data,
 
 char *fim_file_diff(const char *filename, const directory_t *configuration) {
 
+    float backup_file_size;
     char *diff_changes = NULL;
     int ret;
 
@@ -439,7 +440,7 @@ char *fim_file_diff(const char *filename, const directory_t *configuration) {
     }
 
     // If it exists, estimate the new compressed file
-    float backup_file_size = (FileSize(diff->compress_file) / 1024.0f);
+    backup_file_size = (FileSize(diff->compress_file) / 1024.0f);
     syscheck.diff_folder_size -= backup_file_size;
     if (ret = fim_diff_create_compress_file(diff), ret != 0) {
         syscheck.diff_folder_size += backup_file_size;
@@ -853,7 +854,7 @@ char* filter(const char *string) {
 
     while (*ptr) {
         clen = strcspn(ptr + 1, "\"\\$`");
-        out = realloc(out, len + clen + 3);
+        out = static_cast<char*>(realloc(out, len + clen + 3));
         if(!out){
             merror_exit(MEM_ERROR, errno, strerror(errno)); // LCOV_EXCL_LINE
         }

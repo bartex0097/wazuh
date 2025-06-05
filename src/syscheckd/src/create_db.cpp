@@ -52,6 +52,10 @@ static const char *FIM_EVENT_MODE[] = {
     "whodata"
 };
 
+// Forward declaration
+void fim_check_db_state(int nodes_limit, int nodes_count, fim_state_db* db_state, const char* table_name);
+
+
 cJSON * fim_calculate_dbsync_difference(const fim_file_data *data,
                                         const cJSON* changed_data,
                                         cJSON* old_attributes,
@@ -524,7 +528,7 @@ time_t fim_scan() {
 
     w_rwlock_rdlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         char *path = fim_get_real_path(dir_it);
 
         fim_checker(path, &evt_data, dir_it, db_transaction_handle, &txn_ctx);
@@ -556,9 +560,12 @@ time_t fim_scan() {
 
         w_rwlock_rdlock(&syscheck.directories_lock);
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t*>(node_it->data);
             char *path;
-            event_data_t evt_data = { .mode = FIM_SCHEDULED, .report_event = true, .w_evt = NULL };
+            event_data_t evt_data{};
+            evt_data.report_event = 1;
+            evt_data.type = FIM_ADD;
+            evt_data.mode = FIM_REALTIME;
 
             path = fim_get_real_path(dir_it);
 
@@ -937,7 +944,11 @@ void fim_realtime_event(char *file) {
 
     // If the file exists, generate add or modify events.
     if (w_stat(file, &file_stat) >= 0) {
-        event_data_t evt_data = { .mode = FIM_REALTIME, .w_evt = NULL, .report_event = true };
+        event_data_t evt_data{};
+        evt_data.report_event = true;
+        evt_data.mode = FIM_REALTIME;
+        evt_data.w_evt = NULL;
+
 
         /* Need a sleep here to avoid triggering on vim
          * (and finding the file removed)
@@ -966,7 +977,10 @@ void fim_whodata_event(whodata_evt * w_evt) {
 
     // If the file exists, generate add or modify events.
     if(w_stat(w_evt->path, &file_stat) >= 0) {
-        event_data_t evt_data = { .mode = FIM_WHODATA, .w_evt = w_evt, .report_event = true };
+        event_data_t evt_data{};
+        evt_data.mode = FIM_WHODATA;
+        evt_data.w_evt = w_evt;
+        evt_data.report_event = true;
 
         fim_rt_delay();
 
@@ -999,7 +1013,11 @@ void fim_db_remove_entry(void * data, void * ctx)
 }
 
 void fim_process_wildcard_removed(directory_t *configuration) {
-    event_data_t evt_data = { .mode = FIM_SCHEDULED, .w_evt = NULL, .report_event = true, .type = FIM_DELETE };
+    event_data_t evt_data{};
+    evt_data.mode = FIM_SCHEDULED;
+    evt_data.w_evt = NULL;
+    evt_data.report_event = true;
+    evt_data.type = FIM_DELETE;
 
     if (fim_generate_delete_event(configuration->path, &evt_data, configuration) == FIMDB_ERR)
     {
@@ -1032,7 +1050,11 @@ void fim_db_process_missing_entry(void * data, void * ctx)
 }
 
 void fim_process_missing_entry(char * pathname, fim_event_mode mode, whodata_evt * w_evt) {
-    event_data_t evt_data = { .mode = mode, .w_evt = w_evt, .report_event = true };
+    event_data_t evt_data{};
+    evt_data.mode = mode;
+    evt_data.w_evt = w_evt;
+    evt_data.report_event = true;
+
     directory_t *configuration = NULL;
 
     configuration = fim_configuration_directory(pathname);
@@ -1194,7 +1216,7 @@ directory_t *fim_configuration_directory(const char *path) {
     trail_path_separator(full_path, path, sizeof(full_path));
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         char *real_path = fim_get_real_path(dir_it);
 
         trail_path_separator(full_entry, real_path, sizeof(full_entry));
@@ -1753,12 +1775,12 @@ void update_wildcards_config() {
     w_rwlock_wrlock(&syscheck.directories_lock);
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         dir_it->is_expanded = 0;
     }
 
     OSList_foreach(node_it, syscheck.wildcards) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         paths = expand_wildcards(dir_it->path);
 
         if (paths == NULL) {
@@ -1794,7 +1816,7 @@ void update_wildcards_config() {
 
     node_it = OSList_GetFirstNode(syscheck.directories);
     while (node_it != NULL) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         if (dir_it->is_wildcard && dir_it->is_expanded == 0) {
 #if INOTIFY_ENABLED
             if (FIM_MODE(dir_it->options) == FIM_REALTIME) {
@@ -1822,7 +1844,7 @@ void update_wildcards_config() {
     w_rwlock_unlock(&syscheck.directories_lock);
 
     OSList_foreach(node_it, removed_entries) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t*>(node_it->data);
         fim_process_wildcard_removed(dir_it);
         mdebug2(FIM_WILDCARDS_REMOVE_DIRECTORY, dir_it->path);
     }
