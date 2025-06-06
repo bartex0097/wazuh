@@ -15,6 +15,10 @@
 #ifndef OS_NET_H
 #define OS_NET_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define IPV6_LINK_LOCAL_PREFIX "FE80:0000:0000:0000:"
 
 #define WAZUH_IPC_TIMEOUT 600    // seconds
@@ -220,5 +224,9 @@ int get_ipv4_string(struct in_addr addr, char *address, size_t address_size);
  * @return 0 on success, -1 otherwise.
  * */
 int get_ipv6_string(struct in6_addr addr6, char *address, size_t address_size);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* OS_NET_H */

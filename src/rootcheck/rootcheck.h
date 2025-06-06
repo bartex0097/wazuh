@@ -15,6 +15,10 @@
 #include "../config/rootcheck-config.h"
 #include <cJSON.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifdef WIN32
 #define PATH_SEP '\\'
 #else
@@ -148,5 +152,9 @@ typedef struct _Proc_Info {
     char *p_name;
     char *p_path;
 } Proc_Info;
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* ROOTCHECK_H */

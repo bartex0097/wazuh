@@ -77,12 +77,20 @@ extern const char *SYSCHECK_EVENT_STRINGS[];
 #define STR_HKEY_USERS                          "HKEY_USERS"
 #define check_wildcard(x)                       strchr(x,'*') || strchr(x,'?')
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /* Fields for paths */
 typedef struct _reg_path_struct {
     char* path;
     int has_wildcard;
     int checked;
 } reg_path_struct;
+
+#ifdef __cplusplus
+}   // extern "C"
+#endif /* __cplusplus */
 
 #endif
 
@@ -96,6 +104,10 @@ typedef struct _reg_path_struct {
 #define FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS    0x00400000
 
 #define MAX_WIN_PERM_SIZE OS_SIZE_20480
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /* Fields for rules */
 typedef enum fim_fields {
@@ -541,5 +553,9 @@ cJSON *win_perm_to_json(char *permissions);
  * @param message Payload.
  */
 void ag_send_syscheck(char * message);
+
+#ifdef __cplusplus
+}   // extern "C"
+#endif /* __cplusplus */
 
 #endif /* SYSCHECK_OP_H */

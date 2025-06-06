@@ -111,8 +111,13 @@
 #include <libgen.h>
 
 #include "defs.h"
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 #include "help.h"
-
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 #include "os_err.h"
 
 #ifndef LARGEFILE64_SOURCE
@@ -233,6 +238,9 @@ extern const char *__local_name;
 #include "../unit_tests/wrappers/common.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 #include "debug_op.h"
 #include "wait_op.h"
 #include "agent_op.h"
@@ -295,5 +303,7 @@ extern const char *__local_name;
 #include "logging_helper.h"
 #include "../shared_modules/rsync/include/rsync.h"
 #include "../shared_modules/dbsync/include/dbsync.h"
-
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 #endif /* SHARED_H */

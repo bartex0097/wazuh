@@ -11,6 +11,15 @@
 #ifndef SYSCHECKC_H
 #define SYSCHECKC_H
 
+#include "../os_crypto/md5_sha1_sha256/md5_sha1_sha256_op.h"
+#include "integrity_op.h"
+#include "../external/sqlite/sqlite3.h"
+#include "../headers/list_op.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 typedef enum fim_event_mode {
     FIM_SCHEDULED,
     FIM_REALTIME,
@@ -143,10 +152,9 @@ typedef enum fdb_stmt {
 #define MAX_REGISTRY_DEPTH 512
 #endif
 
-#include "../os_crypto/md5_sha1_sha256/md5_sha1_sha256_op.h"
-#include "integrity_op.h"
-#include "../external/sqlite/sqlite3.h"
-#include "../headers/list_op.h"
+
+
+
 
 #ifdef WIN32
 typedef struct whodata_dir_status whodata_dir_status;
@@ -582,5 +590,9 @@ void free_directory(directory_t *dir);
  *
  */
 void log_realtime_status(int);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* SYSCHECKC_H */

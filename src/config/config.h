@@ -11,6 +11,14 @@
 #ifndef HCONFIG_H
 #define HCONFIG_H
 
+#include "../os_xml/os_xml.h"
+#include "../config/wazuh_db-config.h"
+#include "time.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define CGLOBAL       0000000001
 #define CRULES        0000000002
 #define CSYSCHECK     0000000004
@@ -59,9 +67,7 @@ typedef enum needed_tags {
 } NeededTags;
 
 
-#include "../os_xml/os_xml.h"
-#include "../config/wazuh_db-config.h"
-#include "time.h"
+
 
 /* Main function to read the config */
 int ReadConfig(int modules, const char *cfgfile, void *d1, void *d2);
@@ -189,5 +195,9 @@ int Test_Labels(const char * path);
  * @param node anti_tampering block configuration
  */
 int Read_AntiTampering(XML_NODE node, void *d1);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* HCONFIG_H */

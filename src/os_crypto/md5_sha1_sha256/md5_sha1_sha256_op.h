@@ -15,6 +15,9 @@
 #include "../sha1/sha1_op.h"
 #include "../sha256/sha256_op.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 int OS_MD5_SHA1_SHA256_File(const char *fname,
                             char **prefilter_cmd,
@@ -23,5 +26,9 @@ int OS_MD5_SHA1_SHA256_File(const char *fname,
                             os_sha256 sha256output,
                             int mode,
                             size_t max_size) __attribute((nonnull(1, 3, 4)));
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* MD5SHA1SHA256_OP_H */
