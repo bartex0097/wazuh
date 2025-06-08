@@ -204,6 +204,7 @@ char *fim_registry_value_diff(const char *key_name,
                               const registry_t *configuration) {
 
     char *diff_changes = NULL;
+    float backup_file_size;
     int ret;
 
     // Invalid types for report_changes
@@ -255,7 +256,7 @@ char *fim_registry_value_diff(const char *key_name,
     }
 
     // If it exists, estimate the new compressed file
-    float backup_file_size = (FileSize(diff->compress_file) / 1024.0f);
+    backup_file_size = (FileSize(diff->compress_file) / 1024.0f);
     syscheck.diff_folder_size -= backup_file_size;
     if (ret = fim_diff_create_compress_file(diff), ret != 0) {
         syscheck.diff_folder_size += backup_file_size;
