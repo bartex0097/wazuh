@@ -124,6 +124,7 @@ void fim_initialize() {
 
 #ifdef WIN32
 /* syscheck main for Windows */
+extern "C" {
 int Start_win32_Syscheck() {
     int debug_level = 0;
     int r = 0;
@@ -313,6 +314,7 @@ int Start_win32_Syscheck() {
 
     return 0;
 }
+} // extern "C"
 #endif /* WIN32 */
 
 #ifdef __linux__

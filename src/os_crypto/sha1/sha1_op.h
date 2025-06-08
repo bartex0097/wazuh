@@ -19,6 +19,10 @@
 #endif
 #include <openssl/evp.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define OS_SHA1_HEXDIGEST_SIZE (SHA_DIGEST_LENGTH * 2) // Sha1 digest len (20) * 2 (hex chars per byte)
 
 typedef char os_sha1[OS_SHA1_HEXDIGEST_SIZE + 1];
@@ -89,5 +93,9 @@ int OS_SHA1_File_Nbytes_with_fp_check(const char * fname, EVP_MD_CTX ** c, os_sh
  * @param buf[in] String to update the SHA1 context
  */
 void OS_SHA1_Stream(EVP_MD_CTX *c, os_sha1 output, char * buf);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SHA1_OP_H */

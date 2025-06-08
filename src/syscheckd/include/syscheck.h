@@ -732,6 +732,10 @@ int fim_check_restrict(const char *file_name, OSMatch *restriction);
 void *syscom_main(void *arg);
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief Dispatches messages from API directed to syscheck module
  *
@@ -740,6 +744,11 @@ void *syscom_main(void *arg);
  * @return The size of the output buffer
  */
 size_t syscom_dispatch(char *command, char **output);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 /**
  * @brief

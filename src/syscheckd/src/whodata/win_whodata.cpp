@@ -101,7 +101,13 @@ int set_privilege(HANDLE hdle, LPCTSTR privilege, int enable);
 unsigned long WINAPI whodata_callback(EVT_SUBSCRIBE_NOTIFY_ACTION action, __attribute__((unused)) void *_void, EVT_HANDLE event);
 int set_policies();
 void set_subscription_query(wchar_t *query);
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int wm_exec(char *command, char **output, int *exitcode, int secs, const char * add_path);
+#ifdef __cplusplus
+}
+#endif
 int restore_audit_policies();
 int whodata_hash_add(OSHash *table, char *id, void *data, char *tag);
 void notify_SACL_change(char *dir);
