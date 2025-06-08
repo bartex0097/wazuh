@@ -466,7 +466,7 @@ void CALLBACK RTCallBack(DWORD dwerror, DWORD dwBytes, LPOVERLAPPED overlap)
     w_rwlock_rdlock(&syscheck.directories_lock);
     w_mutex_lock(&syscheck.fim_realtime_mutex);
     snprintf(wdchar, 260, "%s", (char*)overlap->hEvent);
-    rtlocald = OSHash_Get_ex(syscheck.realtime->dirtb, wdchar);
+    rtlocald = static_cast<win32rtfim*>(OSHash_Get_ex(syscheck.realtime->dirtb, wdchar));
     if (rtlocald == NULL) {
         merror(FIM_ERROR_REALTIME_WINDOWS_CALLBACK_EMPTY);
         w_mutex_unlock(&syscheck.fim_realtime_mutex);
@@ -475,7 +475,7 @@ void CALLBACK RTCallBack(DWORD dwerror, DWORD dwBytes, LPOVERLAPPED overlap)
     }
 
     if(rtlocald->watch_status == FIM_RT_HANDLE_CLOSED) {
-        rtlocald = OSHash_Delete_ex(syscheck.realtime->dirtb, wdchar);
+        rtlocald = static_cast<win32rtfim*>(OSHash_Delete_ex(syscheck.realtime->dirtb, wdchar));
         free_win32rtfim_data(rtlocald);
         mdebug2(FIM_REALTIME_CALLBACK, wdchar);
         w_mutex_unlock(&syscheck.fim_realtime_mutex);
@@ -647,12 +647,12 @@ int realtime_adddir(const char *dir, directory_t *configuration) {
     wdchar[260] = '\0';
     snprintf(wdchar, 260, "%s", dir);
 
-    rtlocald = OSHash_Get_ex(syscheck.realtime->dirtb, wdchar);
+    rtlocald = static_cast<win32rtfim*>(OSHash_Get_ex(syscheck.realtime->dirtb, wdchar));
     if(rtlocald != NULL) {
         if (!w_directory_exists(rtlocald->dir)) {
             if (rtlocald->watch_status == FIM_RT_HANDLE_CLOSED) {
                 mdebug2(FIM_REALTIME_CALLBACK, rtlocald->dir);
-                rtlocald = OSHash_Delete_ex(syscheck.realtime->dirtb, rtlocald->dir);
+                rtlocald = static_cast<win32rtfim*>(OSHash_Delete_ex(syscheck.realtime->dirtb, rtlocald->dir));
                 free_win32rtfim_data(rtlocald);
             } else if (rtlocald->h != NULL && rtlocald->h != INVALID_HANDLE_VALUE) {
                 CloseHandle(rtlocald->h);

@@ -148,7 +148,7 @@ int Start_win32_Syscheck() {
 
         // Free directories list
         OSList_foreach(node_it, syscheck.directories) {
-            free_directory(node_it->data);
+            free_directory(static_cast<directory_t*>(node_it->data));
             node_it->data = NULL;
         }
         OSList_CleanNodes(syscheck.directories);

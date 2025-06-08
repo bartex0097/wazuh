@@ -539,7 +539,7 @@ cJSON *fim_registry_key_json_event(const fim_registry_key *new_data,
     return json_event;
 }
 
-cJSON *fim_registry_event(const fim_entry *new,
+cJSON *fim_registry_event(const fim_entry *new_entry,
                           const fim_entry *saved,
                           const registry_t *configuration,
                           fim_event_mode mode,
@@ -548,17 +548,17 @@ cJSON *fim_registry_event(const fim_entry *new,
                           const char *diff) {
     cJSON *json_event = NULL;
 
-    if (new == NULL) {
+    if (new_entry == NULL) {
         mwarn(FIM_REGISTRY_EVENT_NULL_ENTRY);
         return NULL;
     }
 
-    if (new->registry_entry.key == NULL) {
+    if (new_entry->registry_entry.key == NULL) {
         mwarn(FIM_REGISTRY_EVENT_NULL_ENTRY_KEY);
         return NULL;
     }
 
-    if (new->type != FIM_TYPE_REGISTRY) {
+    if (new_entry->type != FIM_TYPE_REGISTRY) {
         mwarn(FIM_REGISTRY_EVENT_WRONG_ENTRY_TYPE);
         return NULL;
     }
@@ -568,10 +568,10 @@ cJSON *fim_registry_event(const fim_entry *new,
         return NULL;
     }
 
-    if (new->registry_entry.value != NULL) {
-        json_event = fim_registry_value_json_event(new, saved, configuration, mode, event_type, w_evt, diff);
+    if (new_entry->registry_entry.value != NULL) {
+        json_event = fim_registry_value_json_event(new_entry, saved, configuration, mode, event_type, w_evt, diff);
     } else {
-        json_event = fim_registry_key_json_event(new->registry_entry.key, saved ? saved->registry_entry.key : NULL,
+        json_event = fim_registry_key_json_event(new_entry->registry_entry.key, saved ? saved->registry_entry.key : NULL,
                                                  configuration, mode, event_type, w_evt);
     }
 

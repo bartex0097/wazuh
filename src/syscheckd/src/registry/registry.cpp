@@ -79,6 +79,7 @@ static void registry_key_transaction_callback(ReturnTypeCallback resultType,
     cJSON *changed_attributes = NULL;
     cJSON *aux = NULL;
     cJSON *timestamp = NULL;
+    cJSON* data = NULL;
     fim_key_txn_context_t *event_data = (fim_key_txn_context_t *) user_data;
     fim_registry_key* key = event_data->key;
     char *path = NULL;
@@ -149,7 +150,7 @@ static void registry_key_transaction_callback(ReturnTypeCallback resultType,
 
     cJSON_AddStringToObject(json_event, "type", "event");
 
-    cJSON* data = cJSON_CreateObject();
+    data = cJSON_CreateObject();
     cJSON_AddItemToObject(json_event, "data", data);
 
     cJSON_AddStringToObject(data, "path", path);
@@ -215,6 +216,7 @@ static void registry_value_transaction_callback(ReturnTypeCallback resultType,
     cJSON *changed_attributes = NULL;
     cJSON *aux = NULL;
     cJSON *timestamp = NULL;
+    cJSON* data = NULL;
     char *path = NULL;
     char *name = NULL;
     int arch = -1;
@@ -290,7 +292,7 @@ static void registry_value_transaction_callback(ReturnTypeCallback resultType,
 
     cJSON_AddStringToObject(json_event, "type", "event");
 
-    cJSON* data = cJSON_CreateObject();
+    data = cJSON_CreateObject();
     cJSON_AddItemToObject(json_event, "data", data);
 
     cJSON_AddStringToObject(data, "path", path);
@@ -845,18 +847,18 @@ void fim_read_values(HKEY key_handle,
     TCHAR *value_buffer;
     BYTE *data_buffer;
     DWORD i;
-    fim_entry new;
+    fim_entry new_entry;
     char *value_path;
     size_t value_path_length;
     registry_t *configuration = NULL;
     char* diff = NULL;
     os_sha1 hash_full_path;
-    char* arch_string;
+    const char* arch_string;
 
     value_data.arch = arch;
     value_data.path = path;
-    new.registry_entry.value = &value_data;
-    new.registry_entry.key = NULL;
+    new_entry.registry_entry.value = &value_data;
+    new_entry.registry_entry.key = NULL;
 
     os_calloc(max_value_length + 1, sizeof(TCHAR), value_buffer);
     os_calloc(max_value_data_length, sizeof(BYTE), data_buffer);
@@ -876,17 +878,17 @@ void fim_read_values(HKEY key_handle,
             break;
         }
 
-        new.registry_entry.value->name = value_buffer;
-        new.registry_entry.value->type = data_type <= REG_QWORD ? data_type : REG_UNKNOWN;
-        new.registry_entry.value->size = data_size;
-        new.registry_entry.value->last_event = time(NULL);
-        new.registry_entry.value->scanned = 0;
-        new.type = FIM_TYPE_REGISTRY;
+        new_entry.registry_entry.value->name = value_buffer;
+        new_entry.registry_entry.value->type = data_type <= REG_QWORD ? data_type : REG_UNKNOWN;
+        new_entry.registry_entry.value->size = data_size;
+        new_entry.registry_entry.value->last_event = time(NULL);
+        new_entry.registry_entry.value->scanned = 0;
+        new_entry.type = FIM_TYPE_REGISTRY;
 
-        value_path_length = strlen(new.registry_entry.value->path) + strlen(new.registry_entry.value->name) + 2;
+        value_path_length = strlen(new_entry.registry_entry.value->path) + strlen(new_entry.registry_entry.value->name) + 2;
 
         os_malloc(value_path_length, value_path);
-        snprintf(value_path, value_path_length, "%s\\%s", new.registry_entry.value->path, new.registry_entry.value->name);
+        snprintf(value_path, value_path_length, "%s\\%s", new_entry.registry_entry.value->path, new_entry.registry_entry.value->name);
 
         if (fim_registry_validate_ignore(value_path, configuration, 0)) {
             os_free(value_path);
@@ -895,7 +897,7 @@ void fim_read_values(HKEY key_handle,
         }
         os_free(value_path);
 
-        if (fim_check_restrict(new.registry_entry.value->name, configuration->restrict_value)) {
+        if (fim_check_restrict(new_entry.registry_entry.value->name, configuration->restrict_value)) {
             continue;
         }
 
@@ -903,29 +905,29 @@ void fim_read_values(HKEY key_handle,
 
         // Hash containing "value", arch, key path and value name
         // Index used in wazuh manager DB
-        OS_SHA1_strings(hash_full_path, "value", arch_string, new.registry_entry.value->path,
-                        new.registry_entry.value->name, NULL);
-        new.registry_entry.value->hash_full_path = hash_full_path;
+        OS_SHA1_strings(hash_full_path, "value", arch_string, new_entry.registry_entry.value->path,
+                        new_entry.registry_entry.value->name, NULL);
+        new_entry.registry_entry.value->hash_full_path = hash_full_path;
 
-        fim_registry_calculate_hashes(&new, configuration, data_buffer);
+        fim_registry_calculate_hashes(&new_entry, configuration, data_buffer);
 
-        fim_registry_get_checksum_value(new.registry_entry.value);
+        fim_registry_get_checksum_value(new_entry.registry_entry.value);
 
         if (configuration->opts & CHECK_SEECHANGES) {
-            diff = fim_registry_value_diff(new.registry_entry.value->path, new.registry_entry.value->name,
-                                       (char *)data_buffer, new.registry_entry.value->type, configuration);
+            diff = fim_registry_value_diff(new_entry.registry_entry.value->path, new_entry.registry_entry.value->name,
+                                       (char *)data_buffer, new_entry.registry_entry.value->type, configuration);
         }
         txn_ctx_regval->diff = diff;
-        txn_ctx_regval->data = new.registry_entry.value;
+        txn_ctx_regval->data = new_entry.registry_entry.value;
 
-        int result_transaction = fim_db_transaction_sync_row(regval_txn_handler, &new);
+        int result_transaction = fim_db_transaction_sync_row(regval_txn_handler, &new_entry);
 
         if (result_transaction < 0) {
             mdebug2("dbsync transaction failed due to %d", result_transaction);
         }
     }
 
-    new.registry_entry.value = NULL;
+    new_entry.registry_entry.value = NULL;
     os_free(value_data.name);
     os_free(data_buffer);
 }
@@ -959,11 +961,11 @@ void fim_open_key(HKEY root_key_handle,
     DWORD max_value_data_length;
     FILETIME file_time = { 0 };
     DWORD i;
-    fim_entry new;
+    fim_entry new_entry;
     registry_t *configuration;
     int result_transaction = -1;
     os_sha1 hash_full_path;
-    char* arch_string;
+    const char* arch_string;
 
     if (root_key_handle == NULL || full_key == NULL || sub_key == NULL) {
         return;
@@ -1039,11 +1041,11 @@ void fim_open_key(HKEY root_key_handle,
     }
 
     // Done scanning sub_keys, trigger an alert on the current key if required.
-    new.type = FIM_TYPE_REGISTRY;
-    new.registry_entry.key = fim_registry_get_key_data(current_key_handle, full_key, configuration);
-    new.registry_entry.value = NULL;
+    new_entry.type = FIM_TYPE_REGISTRY;
+    new_entry.registry_entry.key = fim_registry_get_key_data(current_key_handle, full_key, configuration);
+    new_entry.registry_entry.value = NULL;
 
-    if (new.registry_entry.key == NULL) {
+    if (new_entry.registry_entry.key == NULL) {
         return;
     }
 
@@ -1051,23 +1053,23 @@ void fim_open_key(HKEY root_key_handle,
 
     // Hash containing "key", arch and key path
     // Index used in wazuh manager DB
-    OS_SHA1_strings(hash_full_path, "key", arch_string, new.registry_entry.key->path, NULL);
-    new.registry_entry.key->hash_full_path = hash_full_path;
+    OS_SHA1_strings(hash_full_path, "key", arch_string, new_entry.registry_entry.key->path, NULL);
+    new_entry.registry_entry.key->hash_full_path = hash_full_path;
 
-    txn_ctx_reg->key = new.registry_entry.key;
+    txn_ctx_reg->key = new_entry.registry_entry.key;
 
-    result_transaction = fim_db_transaction_sync_row(regkey_txn_handler, &new);
+    result_transaction = fim_db_transaction_sync_row(regkey_txn_handler, &new_entry);
 
     if(result_transaction < 0){
         merror("Dbsync registry transaction failed due to %d", result_transaction);
     }
 
     if (value_count) {
-        fim_read_values(current_key_handle, new.registry_entry.key->path, new.registry_entry.key->arch, value_count, max_value_length, max_value_data_length,
+        fim_read_values(current_key_handle, new_entry.registry_entry.key->path, new_entry.registry_entry.key->arch, value_count, max_value_length, max_value_data_length,
                         regval_txn_handler, txn_ctx_regval);
     }
 
-    fim_registry_free_key(new.registry_entry.key);
+    fim_registry_free_key(new_entry.registry_entry.key);
     RegCloseKey(current_key_handle);
 }
 

@@ -208,6 +208,7 @@ int set_winsacl(const char *dir, directory_t *configuration) {
     unsigned long new_sacl_size;
     int retval = 1;
     int privilege_enabled = 0;
+    int is_file;
 
     assert(configuration != NULL);
 
@@ -233,7 +234,7 @@ int set_winsacl(const char *dir, directory_t *configuration) {
     ZeroMemory(&old_sacl_info, sizeof(ACL_SIZE_INFORMATION));
 
     // Check if the sacl has what the whodata scanner needs
-    int is_file = configuration->dirs_status.object_type == WD_STATUS_FILE_TYPE ? 1 : 0;
+    is_file = configuration->dirs_status.object_type == WD_STATUS_FILE_TYPE ? 1 : 0;
 
     switch (is_valid_sacl(old_sacl, is_file)) {
     case 0:
@@ -679,7 +680,7 @@ int whodata_event_parse(const PEVT_VARIANT raw_data, whodata_evt *event_data) {
         mwarn(FIM_WHODATA_PARAMETER, raw_data[RENDERED_PATH].Type, "path");
         return -1;
     }  else {
-        if (event_data->path = get_whodata_path(raw_data[RENDERED_PATH].XmlVal), !event_data->path) {
+        if (event_data->path = get_whodata_path(reinterpret_cast<const unsigned short*>(raw_data[RENDERED_PATH].XmlVal)), !event_data->path) {
             return -1;
         }
 
@@ -853,7 +854,7 @@ unsigned long WINAPI whodata_callback(EVT_SUBSCRIBE_NOTIFY_ACTION action, __attr
                     whodata_evt *w_evtdup;
 
                     mdebug2(FIM_WHODATA_HANDLE_UPDATE, hash_id);
-                    if (w_evtdup = OSHash_Delete_ex(syscheck.wdata.fd, hash_id), !w_evtdup) {
+                    if (w_evtdup = static_cast<whodata_evt*>(OSHash_Delete_ex(syscheck.wdata.fd, hash_id)), !w_evtdup) {
                         merror(FIM_ERROR_WHODATA_HANDLER_REMOVE, hash_id);
                         free_whodata_event(w_evt);
                         goto clean;
@@ -872,7 +873,7 @@ unsigned long WINAPI whodata_callback(EVT_SUBSCRIBE_NOTIFY_ACTION action, __attr
 
             // Write fd
             case 4663:
-                if (w_evt = OSHash_Get(syscheck.wdata.fd, hash_id), !w_evt) {
+                if (w_evt = static_cast<whodata_evt*>(OSHash_Get_ex(syscheck.wdata.fd, hash_id)), !w_evt) {
                     goto clean;
                 }
 
@@ -912,7 +913,7 @@ unsigned long WINAPI whodata_callback(EVT_SUBSCRIBE_NOTIFY_ACTION action, __attr
 
                 w_rwlock_wrlock(&syscheck.wdata.directories->mutex);
 
-                if (w_dir = OSHash_Get(syscheck.wdata.directories, w_evt->path), w_dir) {
+                if (w_dir = static_cast<whodata_directory*>(OSHash_Get_ex(syscheck.wdata.directories, w_evt->path)), w_dir) {
                     FILETIME ft;
 
                     if ((buffer[RENDERED_TIMESTAMP].FileTimeVal - w_dir->QuadPart) < FILETIME_SECOND) {
@@ -944,7 +945,7 @@ unsigned long WINAPI whodata_callback(EVT_SUBSCRIBE_NOTIFY_ACTION action, __attr
 
             // Close fd
             case 4658:
-                if (w_evt = OSHash_Delete_ex(syscheck.wdata.fd, hash_id), w_evt && w_evt->path) {
+                if (w_evt = static_cast<whodata_evt*>(OSHash_Delete_ex(syscheck.wdata.fd, hash_id)), w_evt && w_evt->path) {
 
                     if (!w_evt->scan_directory) {
                         fim_whodata_event(w_evt);
@@ -1235,9 +1236,9 @@ long unsigned int WINAPI state_checker(__attribute__((unused)) void *_void) {
             while(w_dir_node_next) {
                 w_dir_node_next = w_dir_node_next->next;
 
-                w_dir = w_dir_node->data;
+                w_dir = static_cast<whodata_directory*>(w_dir_node->data);
                 if (w_dir->QuadPart < stale_time.QuadPart) {
-                    if (w_dir = OSHash_Delete(syscheck.wdata.directories, w_dir_node->key), w_dir) {
+                    if (w_dir = static_cast<whodata_directory*>(OSHash_Delete(syscheck.wdata.directories, w_dir_node->key)), w_dir) {
                         free(w_dir);
                     }
                 }
@@ -1267,6 +1268,7 @@ int set_policies() {
     int retval = 1;
     static const char *WPOL_FILE_SYSTEM_SUC = ",System,File System,{0CCE921D-69AE-11D9-BED3-505054503030},,,1\n";
     static const char *WPOL_HANDLE_SUC = ",System,Handle Manipulation,{0CCE9223-69AE-11D9-BED3-505054503030},,,1\n";
+    int wm_exec_ret_code, i, retries, timeout;
 
     if (!IsFile(WPOL_BACKUP_FILE) && remove(WPOL_BACKUP_FILE)) {
         merror(FIM_ERROR_WPOL_BACKUP_FILE_REMOVE, WPOL_BACKUP_FILE, strerror(errno), errno);
@@ -1276,9 +1278,10 @@ int set_policies() {
     snprintf(command, OS_SIZE_1024, WPOL_BACKUP_COMMAND, WPOL_BACKUP_FILE);
 
     // Get the current policies
-    int wm_exec_ret_code, i = 0;
-    int retries = 5;
-    int timeout = 5;
+    wm_exec_ret_code = 0;
+    i = 0;
+    retries = 5;
+    timeout = 5;
     do {
         wm_exec_ret_code = wm_exec(command, NULL, &result_code, timeout+i, NULL);
         if (wm_exec_ret_code || result_code) {
@@ -1654,9 +1657,9 @@ char *get_whodata_path(const short unsigned int *win_path) {
     char *path = NULL;
     int error = -1;
 
-    if (count = WideCharToMultiByte(CP_ACP, 0, win_path, -1, NULL, 0, NULL, NULL), count > 0) {
+    if (count = WideCharToMultiByte(CP_ACP, 0, reinterpret_cast<const wchar_t*>(win_path), -1, NULL, 0, NULL, NULL), count > 0) {
         os_calloc(count + 1, sizeof(char), path);
-        if (count = WideCharToMultiByte(CP_ACP, 0, win_path, -1, path, count, NULL, NULL), count > 0) {
+        if (count = WideCharToMultiByte(CP_ACP, 0, reinterpret_cast<const wchar_t*>(win_path), -1, path, count, NULL, NULL), count > 0) {
             path[count] = '\0';
         } else {
             error = GetLastError();

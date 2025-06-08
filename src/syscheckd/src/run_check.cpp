@@ -24,6 +24,7 @@
 #include "../rootcheck/rootcheck.h"
 #include "db/include/db.h"
 #include "ebpf/include/ebpf_whodata.h"
+#include "timeHelper.h"
 
 #ifdef WAZUH_UNIT_TESTING
 unsigned int files_read = 0;
