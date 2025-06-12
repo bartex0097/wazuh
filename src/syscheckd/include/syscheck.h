@@ -16,6 +16,10 @@
 #include "syscheck_op.h"
 #include <cJSON.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAX_LINE PATH_MAX+256
 
 /* Notify list size */
@@ -923,4 +927,9 @@ bool fim_shutdown_process_on();
 void check_ebpf_availability();
 #endif /* ENABLE_AUDIT */
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* SYSCHECK_H */
