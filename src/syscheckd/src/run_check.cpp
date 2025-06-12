@@ -514,7 +514,7 @@ void * fim_run_realtime(__attribute__((unused)) void * args) {
     OSListNode *node_it;
     w_rwlock_rdlock(&syscheck.directories_lock);
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t *>(node_it->data);
         if (dir_it->options & REALTIME_ACTIVE) {
             mwarn(FIM_WARN_REALTIME_UNSUPPORTED);
             break;
@@ -686,7 +686,7 @@ static void *symlink_checker_thread(__attribute__((unused)) void * data) {
         w_rwlock_rdlock(&syscheck.directories_lock);
 
         OSList_foreach(node_it, syscheck.directories) {
-            dir_it = node_it->data;
+            dir_it = static_cast<directory_t *>(node_it->data);
             if ((dir_it->options & CHECK_FOLLOW) == 0) {
                 continue;
             }
@@ -743,7 +743,7 @@ STATIC void fim_link_update(const char *new_path, directory_t *configuration) {
     // Check if the previously pointed folder is in the configuration
     // and delete its database entries if it isn't
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t *>(node_it->data);
         if (dir_it == configuration) {
             // This is the link being changed
             continue;
@@ -767,7 +767,7 @@ STATIC void fim_link_update(const char *new_path, directory_t *configuration) {
 
     // Check if the updated path of the link is already in the configuration
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t *>(node_it->data);
         if (dir_it == configuration) {
             if (strcmp(new_path, dir_it->path) == 0) {
                 // We were monitoring a link, now we are monitoring the actual directory
@@ -834,7 +834,12 @@ STATIC void fim_link_check_delete(directory_t *configuration) {
 }
 
 STATIC void fim_link_delete_range(directory_t *configuration) {
-    event_data_t evt_data = { .mode = FIM_SCHEDULED, .report_event = false, .w_evt = NULL, .type = FIM_DELETE };
+    event_data_t evt_data {};
+    evt_data.mode = FIM_SCHEDULED;
+    evt_data.report_event = false;
+    evt_data.w_evt = NULL;
+    evt_data.type = FIM_DELETE;
+
     char pattern[PATH_MAX] = {0};
 
     get_data_ctx ctx = {
@@ -852,7 +857,10 @@ STATIC void fim_link_delete_range(directory_t *configuration) {
 }
 
 STATIC void fim_link_silent_scan(const char *path, directory_t *configuration) {
-    event_data_t evt_data = { .mode = FIM_SCHEDULED, .w_evt = NULL, .report_event = false };
+    event_data_t evt_data{};
+    evt_data.mode = FIM_SCHEDULED;
+    evt_data.w_evt = NULL;
+    evt_data.report_event = false;
 
     fim_checker(path, &evt_data, configuration, NULL, NULL);
 
@@ -870,7 +878,7 @@ STATIC void fim_link_reload_broken_link(char *path, directory_t *configuration) 
     OSListNode *node_it;
 
     OSList_foreach(node_it, syscheck.directories) {
-        dir_it = node_it->data;
+        dir_it = static_cast<directory_t *>(node_it->data);
         if (strcmp(path, dir_it->path) == 0) {
             // If a configuration directory exists don't reload
             mdebug2(FIM_LINK_ALREADY_ADDED, dir_it->path);
