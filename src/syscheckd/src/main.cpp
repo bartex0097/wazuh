@@ -11,7 +11,20 @@
 /* Syscheck
  * Copyright (C) 2003 Daniel B. Cid <daniel@underlinux.com.br>
  */
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+#include "sig_op.h"
+#include "help.h"
+#include "file_op.h"
+#include "logging_helper.h"
+#include "privsep_op.h"
+#include "../../rootcheck/rootcheck.h"
+#include "pthreads_op.h"
+#include "mq_op.h"
+#include "../config/syscheck-config.h"
+}
+
+
 #include "syscheck.h"
 #include "../rootcheck/rootcheck.h"
 #include "db.h"

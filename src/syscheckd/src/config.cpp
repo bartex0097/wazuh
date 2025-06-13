@@ -8,7 +8,15 @@
  * Foundation
  */
 
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+#include "string_op.h"
+#include "../../config/syscheck-config.h"
+#include "../../config/config.h"
+}
+
+#include <unistd.h>
+
 #include "syscheck.h"
 #include "../config/config.h"
 #include "../rootcheck/rootcheck.h"

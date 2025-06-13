@@ -14,6 +14,7 @@
 #define FILE_OP_H
 
 #include <stdint.h>
+#include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
 #include <sys/stat.h>

@@ -13,7 +13,6 @@
 #ifndef PRIV_H
 #define PRIV_H
 
-#include "shared.h"
 
 #if defined(SUN_MAJOR_VERSION) && defined(SUN_MINOR_VERSION)  && \
     (SUN_MAJOR_VERSION < 11) || \

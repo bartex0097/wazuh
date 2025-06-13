@@ -11,6 +11,11 @@
 #define EBPF_WHODATA_H
 
 #include "syscheck.h"
+#include "logging_helper.h"
+#include "../../../error_messages/warning_messages.h"
+
+#include <string.h>
+
 
 #ifdef __cplusplus
 extern "C" {

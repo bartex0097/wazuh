@@ -11,6 +11,8 @@
 #ifndef PTHREADS_OP_H
 #define PTHREADS_OP_H
 
+#include "../error_messages/error_messages.h"
+
 #ifndef WIN32
 #define w_create_thread(x, y) if (!CreateThread((void * (*) (void *))x, y)) merror_exit(THREAD_ERROR);
 #else

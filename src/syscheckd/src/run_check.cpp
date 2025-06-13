@@ -18,7 +18,13 @@
 #include <sys/inotify.h>
 #endif
 
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+}
+
+#define os_strdup(x,y) ((y = strdup(x)))?(void)1:merror_exit(MEM_ERROR, errno, strerror(errno))
+
+
 #include "syscheck.h"
 #include "../os_crypto/md5_sha1_sha256/md5_sha1_sha256_op.h"
 #include "../rootcheck/rootcheck.h"

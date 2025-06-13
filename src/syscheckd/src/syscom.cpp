@@ -8,7 +8,15 @@
  * Foundation.
  */
 
-#include <shared.h>
+// #include <cstdint>
+
+extern "C" {
+#include "debug_op.h"
+#include "agent_op.h"
+}
+
+
+
 #include "syscheck.h"
 #include "../rootcheck/rootcheck.h"
 #include "../os_net/os_net.h"
@@ -123,6 +131,7 @@ size_t syscom_dispatch(char * command, char ** output){
 
 // LCOV_EXCL_START
 #ifndef WIN32
+extern "C" {
 void * syscom_main(__attribute__((unused)) void * arg) {
     int sock;
     int peer;
@@ -202,6 +211,6 @@ void * syscom_main(__attribute__((unused)) void * arg) {
     close(sock);
     return NULL;
 }
-
+} // extern "C"
 #endif
 // LCOV_EXCL_STOP

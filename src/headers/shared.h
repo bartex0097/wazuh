@@ -181,17 +181,6 @@ typedef uint8_t u_int8_t;
 #define WFALLTHROUGH ((void) 0)
 #endif
 
-/* Common structure for socket forwarding in Analysisd and logcollector */
-typedef struct _socket_forwarder {
-    char   *name;
-    char   *location;
-    int    mode;
-    char   *prefix;
-    int    socket;
-    time_t last_attempt;
-} socket_forwarder;
-
-
 extern const char *__local_name;
 /*** Global prototypes ***/
 /*** These functions will exit on error. No need to check return code ***/

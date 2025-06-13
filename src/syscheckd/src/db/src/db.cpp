@@ -23,6 +23,8 @@
 #include "stringHelper.h"
 #include "cjsonSmartDeleter.hpp"
 
+#include "rsync.h"
+
 void DB::init(const int storage,
               const int syncInterval,
               const uint32_t syncMaxInterval,

@@ -11,6 +11,8 @@
 #ifndef H_STRINGOP_OS
 #define H_STRINGOP_OS
 
+#include <unistd.h>
+
 #include <cJSON.h>
 #include <stdbool.h>
 

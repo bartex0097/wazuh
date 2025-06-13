@@ -12,7 +12,10 @@
  * Copyright (C) 2003 Daniel B. Cid <daniel@underlinux.com.br>
  */
 
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+}
+
 #include "syscheck.h"
 #include "../rootcheck/rootcheck.h"
 #include "db/include/db.h"

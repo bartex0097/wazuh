@@ -8,7 +8,22 @@
  * Foundation
  */
 
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+#include "list_op.h"
+#include "syscheck_op.h"
+#include "../../config/syscheck-config.h"
+#include "../../error_messages/error_messages.h"
+#include "../../error_messages/debug_messages.h"
+#include "../../error_messages/information_messages.h"
+#include "../../error_messages/warning_messages.h"
+#include "string.h"
+}
+
+#define os_calloc(x,y,z) ((z = (__typeof__(z)) calloc(x,y)))?(void)1:merror_exit(MEM_ERROR, errno, strerror(errno))
+
+
+
 #include "syscheck.h"
 #include "syscheck_op.h"
 #include "integrity_op.h"

@@ -8,12 +8,12 @@
  * Foundation
  */
 
-#include "shared.h"
-#include "syscheck.h"
+extern "C" {
+#include "debug_op.h"
+}
 
 #include "fs_op.h"
 #include "hash_op.h"
-#include "debug_op.h"
 #include "syscheck.h"
 #include "syscheck_op.h"
 

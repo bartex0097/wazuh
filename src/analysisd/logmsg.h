@@ -10,8 +10,6 @@
 #ifndef LOGMSG_H
 #define LOGMSG_H
 
-#include "shared.h"
-
 #define smerror(list, msg, ...) _os_analysisd_add_logmsg(list, LOGLEVEL_ERROR, __LINE__, __func__, __FILE__, msg, ##__VA_ARGS__)
 #define smwarn(list, msg, ...) _os_analysisd_add_logmsg(list, LOGLEVEL_WARNING, __LINE__, __func__, __FILE__, msg, ##__VA_ARGS__)
 #define sminfo(list, msg, ...) _os_analysisd_add_logmsg(list, LOGLEVEL_INFO, __LINE__, __func__, __FILE__, msg, ##__VA_ARGS__)

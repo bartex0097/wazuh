@@ -11,7 +11,11 @@
 #ifndef DECODER_H
 #define DECODER_H
 
-#include "shared.h"
+#include <sys/stat.h>
+#include "labels_op.h"
+#include "atomic.h"
+#include "vector_op.h"
+#include "defs.h"
 #include "../logmsg.h"
 #include "expression.h"
 

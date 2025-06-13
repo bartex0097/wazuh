@@ -7,7 +7,10 @@
  * Foundation
  */
 
-#include "shared.h"
+extern "C" {
+#include "debug_op.h"
+}
+
 #include "../os_crypto/md5/md5_op.h"
 #include "syscheck.h"
 

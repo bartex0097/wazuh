@@ -25,6 +25,11 @@
 #include "ebpf_whodata.hpp"
 #include "bpf_helpers.h"
 
+#include "../../../error_messages/debug_messages.h"
+#include "../../../error_messages/warning_messages.h"
+#include "../../../error_messages/error_messages.h"
+#include "../../../error_messages/information_messages.h"
+
 #define KERNEL_VERSION_FILE "/proc/sys/kernel/osrelease"
 #define EBPF_HC_FILE "tmp/ebpf_hc"
 #define LIB_INSTALL_PATH "bpf"

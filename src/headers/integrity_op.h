@@ -11,13 +11,16 @@
 #ifndef INTEGRITY_OP_H
 #define INTEGRITY_OP_H
 
-#include "shared.h"
+#include "hash_op.h"
+#include "fs_op.h"
+#include "../os_xml/os_xml.h"
+#include "../os_regex/os_regex.h"
 
 /*
 #include <openssl/sha.h>
 #include <math.h>
 
-#include "hash_op.h"
+
 #include "os_crypto/sha1/sha1_op.h"
 #include "debug_op.h"
 */

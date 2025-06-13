@@ -13,11 +13,12 @@
 
 #define MAX_LAST_EVENTS 11
 
-#include "shared.h"
 #include "expression.h"
 #include "active-response.h"
 #include "lists.h"
 #include "logmsg.h"
+#include "queue_op.h"
+#include "store_op.h"
 
 
 /* Event fields - stored on a u_int32_t */

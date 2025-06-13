@@ -49,6 +49,8 @@
 #include "../os_xml/os_xml.h"
 #include "exec_op.h"
 #include "list_op.h"
+#include "defs.h"
+#include "../headers/socket_fowarder.h"
 
 extern int maximum_files;
 extern int total_files;
