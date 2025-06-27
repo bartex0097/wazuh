@@ -29,6 +29,8 @@
             value: GROUPS_SCAN
         - users:
             value: USERS_SCAN
+        - browser_extensions:
+            value: BROWSER_EXTENSIONS_SCAN
 
     - section: syscheck
       elements:

@@ -29,6 +29,8 @@
             value: GROUPS_SCAN
         - users:
             value: USERS_SCAN
+        - browser_exetensions:
+            value: BROWSER_EXTENSIONS_SCAN
         - synchronization:
             elements:
               - max_eps:
