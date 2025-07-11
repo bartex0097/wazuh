@@ -157,8 +157,8 @@ _context_cache = dict()
 
 
 # =========================================== Wazuh constants and variables ============================================
-# Token cache clear event.
-token_cache_event = Event()
+# Clear cache event.
+cache_event = Event()
 _WAZUH_UID = None
 _WAZUH_GID = None
 GROUP_NAME = 'wazuh'
