@@ -302,6 +302,8 @@ class DistributedAPI:
                 except process.BrokenProcessPool:
                     raise exception.WazuhInternalError(901)
             except json.decoder.JSONDecodeError as e:
+                self.logger.error(f"Data is {data}")
+                self.logger.error(f"ERROR is {e}")
                 raise exception.WazuhInternalError(3036, extra_message=str(e.msg))
             except process.BrokenProcessPool:
                 raise exception.WazuhInternalError(900)
