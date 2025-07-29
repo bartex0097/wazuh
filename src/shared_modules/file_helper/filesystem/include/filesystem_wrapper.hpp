@@ -19,6 +19,12 @@ namespace file_system
         /// @copydoc IFileSystemWrapper::is_directory
         bool is_directory(const std::filesystem::path& path) const override;
 
+        /// @copydoc IFileSystemWrapper::resolvePath
+        std::string resolvePath(const std::string& fileName, const std::string& relativePath) const override;
+
+        /// @copydoc IFileSystemWrapper::getFilename
+        std::string getFilename(const std::string& path) const override;
+
         /// @copydoc IFileSystemWrapper::is_regular_file
         bool is_regular_file(const std::filesystem::path& path) const override;
 

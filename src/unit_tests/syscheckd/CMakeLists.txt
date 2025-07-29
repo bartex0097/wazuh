@@ -10,6 +10,7 @@ else()
 endif()
 
 file(GLOB rootfiles ${SRC_FOLDER}/rootcheck/*.o)
+list(APPEND rootfiles ${SRC_FOLDER}/shared/fs_op.o)
 
 if(${TARGET} STREQUAL "winagent")
   # Exclude winagent file
@@ -149,7 +150,7 @@ if(${TARGET} STREQUAL "winagent")
   list(APPEND syscheckd_tests_flags "${FIM_DIFF_CHANGES_BASE_FLAGS} -Wl,--wrap=FileSizeWin -Wl,--wrap,fim_sync_push_msg \
                                      -Wl,--wrap=fim_db_get_count_registry_data -Wl,--wrap=fim_db_get_count_registry_key -Wl,--wrap=syscom_dispatch \
                                      -Wl,--wrap=is_fim_shutdown -Wl,--wrap=_imp__dbsync_initialize \
-                                     -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown")
+                                     -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown -Wl,--wrap=utf8_GetShortPathName")
 else()
   list(APPEND syscheckd_tests_flags "${FIM_DIFF_CHANGES_BASE_FLAGS} -Wl,--wrap=unlink -Wl,--wrap=FileSize")
 endif()
@@ -180,7 +181,8 @@ if(${TARGET} STREQUAL "winagent")
                                            -Wl,--wrap,fim_sync_push_msg -Wl,--wrap=fim_db_get_count_registry_data \
                                            -Wl,--wrap=fim_db_get_count_registry_key -Wl,--wrap=syscom_dispatch
                                            -Wl,--wrap=is_fim_shutdown -Wl,--wrap=_imp__dbsync_initialize \
-                                           -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown")
+                                           -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown \
+                                           -Wl,--wrap=utf8_CreateFile")
 else()
   list(APPEND syscheckd_tests_flags "${RUN_REALTIME_BASE_FLAGS}")
 endif()
@@ -378,7 +380,8 @@ if(${TARGET} STREQUAL "winagent")
                                           -Wl,--wrap,get_file_user -Wl,--wrap,fim_registry_scan \
                                           -Wl,--wrap,get_UTC_modification_time -Wl,--wrap,fim_sync_push_msg \
                                           -Wl,--wrap=is_fim_shutdown -Wl,--wrap=_imp__dbsync_initialize \
-                                          -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown"
+                                          -Wl,--wrap=_imp__rsync_initialize -Wl,--wrap=fim_db_teardown \
+                                          -Wl,--wrap=utf8_stat64"
                                           fimdb)
 else()
     target_link_libraries(test_create_db "${CREATE_DB_BASE_FLAGS} -Wl,--wrap=lstat -Wl,--wrap=count_watches \

@@ -27,6 +27,18 @@ public:
     /// @return Returns true if the path is a directory, otherwise false.
     virtual bool is_directory(const std::filesystem::path& path) const = 0;
 
+    /// @brief Get the full path of a file
+    /// @param fileName Name of the file
+    /// @param relativePath Relative path to the file
+    /// @details This function resolves the full path of a file based on the provided relative path and the file name.
+    /// @return The full path of the file as a string.
+    virtual std::string resolvePath(const std::string& fileName, const std::string& relativePath) const = 0;
+
+    /// @brief Gets the filename from a given path.
+    /// @param path The path from which to extract the filename.
+    /// @return Returns the filename as a string.
+    virtual std::string getFilename(const std::string& path) const = 0;
+
     /// @brief Checks if the specified path is a regular file.
     /// @param path The path to check.
     /// @return Returns true if the path is a regular file, otherwise false.

@@ -7,6 +7,11 @@ class MockFileSystemWrapper : public IFileSystemWrapper
 public:
     MOCK_METHOD(bool, exists, (const std::filesystem::path& path), (const, override));
     MOCK_METHOD(bool, is_directory, (const std::filesystem::path& path), (const, override));
+    MOCK_METHOD(std::string,
+                resolvePath,
+                (const std::string& fileName, const std::string& relativePath),
+                (const, override));
+    MOCK_METHOD(std::string, getFilename, (const std::string& path), (const, override));
     MOCK_METHOD(bool, is_regular_file, (const std::filesystem::path& path), (const, override));
     MOCK_METHOD(bool, is_socket, (const std::filesystem::path& path), (const, override));
     MOCK_METHOD(bool, is_symlink, (const std::filesystem::path& path), (const, override));

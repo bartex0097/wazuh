@@ -12,6 +12,21 @@ namespace file_system
         return std::filesystem::is_directory(path);
     }
 
+    std::string FileSystemWrapper::resolvePath(const std::string& fileName, const std::string& relativePath) const
+    {
+        return (std::filesystem::path(fileName).parent_path() / relativePath).string();
+    }
+
+    std::string FileSystemWrapper::getFilename(const std::string& path) const
+    {
+        const auto pos = path.find_last_of("/\\");
+        if (pos == std::string::npos)
+        {
+            return path;
+        }
+        return path.substr(pos + 1);
+    }
+
     bool FileSystemWrapper::is_regular_file(const std::filesystem::path& path) const
     {
         return std::filesystem::is_regular_file(path);
