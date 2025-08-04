@@ -86,6 +86,23 @@ namespace chrome
         {ChromeBrowserType::Arc, "Library/Application Support/Arc/User Data"}
     };
 
+    const std::unordered_map<ChromeBrowserType, std::string>
+    kChromeBrowserTypeToString =
+    {
+        {ChromeBrowserType::GoogleChrome, "chrome"},
+        {ChromeBrowserType::GoogleChromeBeta, "chrome_beta"},
+        {ChromeBrowserType::GoogleChromeDev, "chrome_dev"},
+        {ChromeBrowserType::GoogleChromeCanary, "chrome_canary"},
+        {ChromeBrowserType::Brave, "brave"},
+        {ChromeBrowserType::Chromium, "chromium"},
+        {ChromeBrowserType::Yandex, "yandex"},
+        {ChromeBrowserType::Opera, "opera"},
+        {ChromeBrowserType::Edge, "edge"},
+        {ChromeBrowserType::Edge, "edge_beta"},
+        {ChromeBrowserType::Vivaldi, "vivaldi"},
+        {ChromeBrowserType::Arc, "arc"},
+    };
+
     const std::string kPreferencesFile{"Preferences"};
     const std::string kSecurePreferencesFile{"Secure Preferences"};
     const std::string kExtensionsDir{"Extensions"};
@@ -125,6 +142,7 @@ namespace chrome
             void getExtensionsFromPath(chrome::ChromeExtensionList& extensions, const std::string& path);
 
             std::shared_ptr<IChromeExtensionsWrapper> m_chromeExtensionsWrapper;
+            std::unordered_map<std::string, std::string> m_userIds;
     };
 
 } // namespace chrome
