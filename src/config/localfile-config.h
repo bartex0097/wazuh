@@ -11,6 +11,7 @@
 #ifndef CLOGREADER_H
 #define CLOGREADER_H
 
+#define SYS_LOG      "syslog"
 #define EVENTLOG     "eventlog"
 #define EVENTCHANNEL "eventchannel"
 #define MACOS        "macos"
@@ -242,6 +243,7 @@ typedef struct _logreader {
     int exists;
     unsigned int age;
     char *age_str;
+    bool follow_symlink;
 
     void *(*read)(struct _logreader *lf, int *rc, int drop_it);
 
