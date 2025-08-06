@@ -22,6 +22,9 @@ struct PolicyEvaluationContext
     std::string rule = {};
     std::optional<std::string> pattern = std::nullopt;
     bool isNegated = false;
+    int commandsTimeout= 30;
+    bool isRemote = false;
+    bool remoteEnabled = false;
 };
 
 class IRuleEvaluator
@@ -166,6 +169,9 @@ class RuleEvaluatorFactory
 public:
     static std::unique_ptr<IRuleEvaluator>
     CreateEvaluator(const std::string& input,
+                    const int commandsTimeout,
+                    const bool isRemote,
+                    const bool remoteEnabled,
                     std::unique_ptr<IFileSystemWrapper> fileSystemWrapper = nullptr,
                     std::unique_ptr<IFileIOUtils> fileUtils = nullptr,
                     std::unique_ptr<ISysInfo> sysInfo = nullptr);

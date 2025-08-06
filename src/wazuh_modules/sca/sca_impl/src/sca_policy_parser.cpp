@@ -87,7 +87,9 @@ namespace
 } // namespace
 
 // NOLINTNEXTLINE(performance-unnecessary-value-param)
-PolicyParser::PolicyParser(const std::filesystem::path& filename, std::unique_ptr<IYamlDocument> yamlDocument)
+PolicyParser::PolicyParser(const std::filesystem::path& filename, const int commandsTimeout, const bool remoteEnabled, std::unique_ptr<IYamlDocument> yamlDocument)
+: m_commandsTimeout(commandsTimeout)
+, m_remoteEnabled(remoteEnabled)
 {
     if (yamlDocument)
     {
@@ -97,6 +99,12 @@ PolicyParser::PolicyParser(const std::filesystem::path& filename, std::unique_pt
     {
         m_yamlDocument = std::make_unique<YamlDocument>(filename);
     }
+
+    #ifdef WIN32
+    m_isRemote = filename.string().find("shared\\") != std::string::npos;
+    #else
+    m_isRemote = filename.string().find("etc/shared/") != std::string::npos;
+    #endif
 
     try
     {
@@ -167,7 +175,7 @@ std::unique_ptr<ISCAPolicy> PolicyParser::ParsePolicy(nlohmann::json& policiesAn
 
             for (const auto& rule : rules)
             {
-                std::unique_ptr<IRuleEvaluator> RuleEvaluator = RuleEvaluatorFactory::CreateEvaluator(rule.AsString());
+                std::unique_ptr<IRuleEvaluator> RuleEvaluator = RuleEvaluatorFactory::CreateEvaluator(rule.AsString(), m_commandsTimeout, m_isRemote, m_remoteEnabled);
                 if (RuleEvaluator != nullptr)
                 {
                     requirements.rules.push_back(std::move(RuleEvaluator));
@@ -216,7 +224,7 @@ std::unique_ptr<ISCAPolicy> PolicyParser::ParsePolicy(nlohmann::json& policiesAn
                     {
                         const auto ruleStr = rule.AsString();
 
-                        if (auto ruleEvaluator = RuleEvaluatorFactory::CreateEvaluator(ruleStr))
+                        if (auto ruleEvaluator = RuleEvaluatorFactory::CreateEvaluator(ruleStr, m_commandsTimeout, m_isRemote, m_remoteEnabled))
                         {
                             check.rules.push_back(std::move(ruleEvaluator));
                             checkWithValidRules["rules"].AppendToSequence(ruleStr);

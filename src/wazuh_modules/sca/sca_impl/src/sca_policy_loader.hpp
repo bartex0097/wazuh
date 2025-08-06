@@ -33,6 +33,8 @@ public:
     /// @param dBSync A shared pointer to a DBSync object
     SCAPolicyLoader(const std::vector<std::string>& policies,
                     const std::vector<std::string>& disabledPolicies,
+                    const int commandsTimeout,
+                    const bool remoteEnabled,
                     std::shared_ptr<IFileSystemWrapper> fileSystemWrapper = nullptr,
                     std::shared_ptr<IDBSync> dBSync = nullptr);
 
@@ -80,6 +82,9 @@ private:
 
     std::vector<std::filesystem::path> m_customPoliciesPaths;
     std::vector<std::filesystem::path> m_disabledPoliciesPaths;
+
+    int m_commandsTimeout;
+    bool m_remoteEnabled;
 
     std::shared_ptr<IDBSync> m_dBSync;
 };

@@ -44,6 +44,8 @@ public:
     void Setup(bool enabled,
                bool scanOnStart,
                std::time_t scanInterval,
+               const int commandsTimeout,
+               const bool remoteEnabled,
                const std::vector<std::string>& policies,
                const std::vector<std::string>& disabledPolicies);
 

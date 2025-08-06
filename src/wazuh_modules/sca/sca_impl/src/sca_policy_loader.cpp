@@ -12,10 +12,14 @@
 
 SCAPolicyLoader::SCAPolicyLoader(const std::vector<std::string>& policies,
                                  const std::vector<std::string>& disabledPolicies,
+                                 const int commandsTimeout,
+                                 const bool remoteEnabled,
                                  std::shared_ptr<IFileSystemWrapper> fileSystemWrapper,
                                  std::shared_ptr<IDBSync> dBSync)
     : m_fileSystemWrapper(fileSystemWrapper ? std::move(fileSystemWrapper)
                                             : std::make_shared<file_system::FileSystemWrapper>())
+    , m_commandsTimeout(commandsTimeout)
+    , m_remoteEnabled(remoteEnabled)
     , m_dBSync(std::move(dBSync))
 {
     const auto loadPoliciesPathsFromConfig = [this](const std::vector<std::string>& policiesStrPaths)
@@ -66,7 +70,7 @@ std::vector<std::unique_ptr<ISCAPolicy>> SCAPolicyLoader::LoadPolicies(const Cre
             {
                 LoggingHelper::getInstance().log(LOG_DEBUG, "Loading policy from " + path.string());
 
-                PolicyParser parser(path);
+                PolicyParser parser(path, m_commandsTimeout, m_remoteEnabled);
 
                 if (auto policy = parser.ParsePolicy(policiesAndChecks); policy)
                 {

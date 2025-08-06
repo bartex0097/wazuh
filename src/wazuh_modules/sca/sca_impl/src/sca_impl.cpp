@@ -101,15 +101,18 @@ void SecurityConfigurationAssessment::Run()
 void SecurityConfigurationAssessment::Setup(bool enabled,
                                             bool scanOnStart,
                                             std::time_t scanInterval,
+                                            const int commandsTimeout,
+                                            const bool remoteEnabled,
                                             const std::vector<std::string>& policies,
                                             const std::vector<std::string>& disabledPolicies)
 {
     m_enabled = enabled;
     m_scanOnStart = scanOnStart;
     m_scanInterval = scanInterval;
-    m_policies = [this, &policies, &disabledPolicies]()
+
+    m_policies = [this, &policies, &disabledPolicies, commandsTimeout, remoteEnabled]()
     {
-        const SCAPolicyLoader policyLoader(policies, disabledPolicies, m_fileSystemWrapper, m_dBSync);
+        const SCAPolicyLoader policyLoader(policies, disabledPolicies, commandsTimeout, remoteEnabled, m_fileSystemWrapper, m_dBSync);
         return policyLoader.LoadPolicies(
             [this](auto policyData, auto checksData)
             {

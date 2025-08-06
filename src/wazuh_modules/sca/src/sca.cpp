@@ -110,8 +110,10 @@ void SCA::setup(const struct wm_sca_t* sca_config)
 {
     if (m_sca && sca_config && !m_setupCalled) {
         // Extract configuration values from wm_sca_t
-        bool enabled = sca_config->enabled != 0;
-        bool scan_on_start = sca_config->scan_on_start != 0;
+        const bool enabled = sca_config->enabled != 0;
+        const bool scan_on_start = sca_config->scan_on_start != 0;
+        const int commandsTimeout = sca_config->commands_timeout;
+        const bool remoteEnabled = sca_config->remote_commands != 0;
 
         // Extract scan interval from scan_config (default to 3600 seconds if not set)
         const auto scanInterval = sca_config->scan_config.interval > 0 ?
@@ -135,7 +137,7 @@ void SCA::setup(const struct wm_sca_t* sca_config)
         }
 
         // Call Setup only once during initialization
-        m_sca->Setup(enabled, scan_on_start, scanInterval, policies, disabledPolicies);
+        m_sca->Setup(enabled, scan_on_start, scanInterval, commandsTimeout, remoteEnabled, policies, disabledPolicies);
         m_setupCalled = true;
     }
 }
