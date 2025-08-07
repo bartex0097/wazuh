@@ -611,6 +611,11 @@ void SQLiteDBEngine::initialize(const std::string&              path,
 
             m_transaction = m_sqliteFactory->createTransaction(m_sqliteConnection);
         }
+
+        else
+        {
+            m_transaction = m_sqliteFactory->createTransaction(m_sqliteConnection);
+        }
     }
     else if (DbManagement::VOLATILE == dbManagement)
     {
